@@ -13,9 +13,11 @@ namespace LibraryApi.Controllers
     public class BooksController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public BooksController(IMediator mediator)
+        private readonly IWebHostEnvironment _hostingEnvironment;
+        public BooksController(IMediator mediator, IWebHostEnvironment hostingEnvironment)
         {
-            _mediator = mediator;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
         }
         //C:\Users\user\Desktop\LibraryApi\LibraryApi\bin\Debug\net6.0\BookImages\
         [HttpGet]
@@ -40,6 +42,8 @@ namespace LibraryApi.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateBook([FromForm]CreateBookCommand input)
         {
+            var rootPath = _hostingEnvironment.WebRootPath;
+            input.WebRootPath = rootPath;
             var result = await _mediator.Send(input);
             if (result)
                 return Created("GetBook", null);

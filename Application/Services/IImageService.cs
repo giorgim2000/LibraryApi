@@ -9,7 +9,7 @@ namespace Application.Services
 {
     public interface IImageService
     {
-        Task<string?> SavePictureAsync(IFormFile pictureFile);
+        Task<string?> SavePictureAsync(IFormFile pictureFile, string rootPath);
         void DeletePicture(string pictureUrl);
     }
 }

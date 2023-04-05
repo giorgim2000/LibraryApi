@@ -9,10 +9,14 @@ namespace Application.Services
 {
     public class ImageService : IImageService
     {
-        public async Task<string?> SavePictureAsync(IFormFile pictureFile)
+        public ImageService()
+        {
+
+        }
+        public async Task<string?> SavePictureAsync(IFormFile pictureFile, string rootPath)
         {
             string fileName = Guid.NewGuid().ToString() + Path.GetExtension(pictureFile.FileName);
-            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "BookImages");
+            string folderPath = Path.Combine(rootPath, "BookImages");
             Directory.CreateDirectory(folderPath);
             string filePath = Path.Combine(folderPath, fileName);
             try
@@ -25,7 +29,7 @@ namespace Application.Services
                 return null;
             }
 
-            return "/BookImages/" + fileName;
+            return "BookImages/" + fileName;
         }
 
         public void DeletePicture(string pictureUrl)

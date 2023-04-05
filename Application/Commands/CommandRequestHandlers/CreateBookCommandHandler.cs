@@ -37,7 +37,7 @@ namespace Application.Commands.CommandRequestHandlers
 
             if(request.Image != null && request.Image.Length > 0)
             {
-                book.Image = await _imageService.SavePictureAsync(request.Image);
+                book.Image = await _imageService.SavePictureAsync(request.Image, request.WebRootPath);
             }
 
             if(request.AuthorIds != null)
