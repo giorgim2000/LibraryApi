@@ -1,7 +1,10 @@
 using Application.Services;
+using Domain.DataTransferObjects.UserDtos;
+using Domain.Entities.UserAggregate;
 using Infrastructure.Data;
 using Infrastructure.Repositories.Abstraction;
 using Infrastructure.Repositories.Implementation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
@@ -16,6 +19,30 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<DataContext>(context =>
                             context.UseSqlServer(builder.Configuration.GetConnectionString("LibraryConnectionString")));
 
+builder.Services.AddIdentity<AppUser, AppRole>(i =>
+    {
+        i.Stores = new StoreOptions { ProtectPersonalData = false };
+        i.Password = new PasswordOptions
+        {
+            RequiredLength = 4,
+            RequireLowercase = false,
+            RequireUppercase = false,
+            RequireNonAlphanumeric = false,
+            RequireDigit = false
+        };
+        i.Lockout = new LockoutOptions { AllowedForNewUsers = false };
+    })
+    .AddEntityFrameworkStores<DataContext>()
+    .AddDefaultTokenProviders();
+
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("BasicAuthorizationPolicy", auth =>
+    {
+        auth.RequireRole(UserType.User);
+    });
+});
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Application")));
 builder.Services.AddTransient(typeof(IRepository<>),typeof(Repository<>));
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
@@ -56,6 +83,8 @@ app.UseStaticFiles(new StaticFileOptions()
 });
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 

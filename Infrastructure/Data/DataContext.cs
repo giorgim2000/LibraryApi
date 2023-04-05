@@ -4,12 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.Entities;
+using Domain.Entities.UserAggregate;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 namespace Infrastructure.Data
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<AppUser,AppRole,int>
     {
         public DataContext(DbContextOptions<DataContext> options):base(options)
         {
@@ -43,7 +45,12 @@ namespace Infrastructure.Data
                 author.Property(x => x.BirthDate).IsRequired(false).HasColumnType("date");
                 author.HasMany(x => x.Books).WithMany(x => x.Authors);
             });
-                
+
+            modelBuilder.Entity<AppRole>().HasData(new[] 
+            { 
+                new AppRole { Id = 1, Name = "User", NormalizedName = "USER" }, 
+                new AppRole { Id = 2, Name = "Admin", NormalizedName = "ADMIN" } 
+            });
             base.OnModelCreating(modelBuilder);
         }
     }

@@ -1,6 +1,8 @@
 ﻿using Application.Commands.CommandRequests;
 using Application.Queries.QueryRequests;
+using Domain.DataTransferObjects.UserDtos;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,8 +17,9 @@ namespace LibraryApi.Controllers
         {
             _mediator = mediator;
         }
-
+        //C:\Users\user\Desktop\LibraryApi\LibraryApi\bin\Debug\net6.0\BookImages\
         [HttpGet]
+        [Authorize(Roles = UserType.User)]
         public async Task<IActionResult> GetBookList()
         {
             var bookCollection = await _mediator.Send(new GetBooksQuery());
