@@ -9,6 +9,5 @@ namespace Domain.Entities.UserAggregate
 {
     public class AppRole : IdentityRole<int>
     {
-
     }
 }

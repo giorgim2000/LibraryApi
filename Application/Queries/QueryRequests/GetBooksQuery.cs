@@ -10,6 +10,6 @@ namespace Application.Queries.QueryRequests
 {
     public class GetBooksQuery : IRequest<IEnumerable<BookDto>>
     {
-
+        public string? TitleSearchWord { get; set; }
     }
 }

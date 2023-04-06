@@ -62,7 +62,7 @@ namespace Application.Commands.CommandRequestHandlers
                 if(book.Image != null)
                     _imageService.DeletePicture(book.Image);
 
-                book.Image = await _imageService.SavePictureAsync(request.Image);
+                book.Image = await _imageService.SavePictureAsync(request.Image, request.WebRootPath);
             }
 
             return await _bookRepository.SaveChangesAsync();

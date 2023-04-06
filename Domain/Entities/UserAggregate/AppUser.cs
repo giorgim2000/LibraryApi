@@ -9,6 +9,6 @@ namespace Domain.Entities.UserAggregate
 {
     public class AppUser : IdentityUser<int>
     {
-        //public ICollection<AppUserRole> AppUserRoles { get; set; }
+        public ICollection<BookRentalHistory>? Rentals { get; set; }
     }
 }

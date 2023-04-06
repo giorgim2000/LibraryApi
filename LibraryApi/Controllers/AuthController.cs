@@ -60,5 +60,11 @@ namespace LibraryApi.Controllers
 
             //return BadRequest("Something went wront!" );
         }
+        [HttpPost(nameof(Logout))]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return Ok();
+        }
     }
 }

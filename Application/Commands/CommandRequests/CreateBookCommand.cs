@@ -18,11 +18,11 @@ namespace Application.Commands.CommandRequests
         [MaxLength(300)]
         public string? Description { get; set; }
         public IFormFile? Image { get; set; }
-        public string WebRootPath { get; set; } = string.Empty;  // READONLY RO GAVXADO SHEIZLEBA!!!
         public double? Rating { get; set; }
         public DateTime? Year { get; set; }
         [Required]
         public bool Taken { get; set; } = false;
         public List<int>? AuthorIds { get; set; }
+        public string WebRootPath { get; set; } = string.Empty;
     }
 }

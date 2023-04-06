@@ -75,10 +75,12 @@ if (app.Environment.IsDevelopment())
 }
 
 
+Directory.CreateDirectory(Path.Combine(app.Environment.ContentRootPath, "BookImages"));
+
 app.UseStaticFiles(new StaticFileOptions()
 {
     FileProvider = new PhysicalFileProvider(
-                            Path.Combine(Directory.GetCurrentDirectory(), @"BookImages")),
+                            Path.Combine(app.Environment.ContentRootPath, @"BookImages")),
     RequestPath = new PathString("/BookImages")
 });
 

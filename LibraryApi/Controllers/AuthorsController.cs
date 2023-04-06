@@ -1,8 +1,11 @@
 ﻿using Application.Commands.CommandRequests;
 using Application.Queries.QueryRequests;
+using Domain.DataTransferObjects.UserDtos;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace LibraryApi.Controllers
 {
@@ -35,6 +38,7 @@ namespace LibraryApi.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = UserType.Admin)]
         public async Task<IActionResult> CreateAuthor([FromForm]CreateAuthorCommand input)
         {
             var result = await _mediator.Send(input);
@@ -45,6 +49,7 @@ namespace LibraryApi.Controllers
         }
 
         [HttpPut]
+        [Authorize(Roles = UserType.Admin)]
         public async Task<IActionResult> UpdateAuthor([FromForm]UpdateAuthorCommand input)
         {
             var result = await _mediator.Send(input);
@@ -55,6 +60,7 @@ namespace LibraryApi.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = UserType.Admin)]
         public async Task<IActionResult> DeleteAuthor(int id)
         {
             var result = await _mediator.Send(new DeleteAuthorCommand { Id= id });

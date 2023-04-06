@@ -22,13 +22,18 @@ namespace Application.Queries.QueryHandlers
 
         public async Task<IEnumerable<BookDto>> Handle(GetBooksQuery request, CancellationToken cancellationToken)
         {
-            var bookCollection = await _bookRepository.GetQuery().Include(book => book.Authors).ToListAsync();
-            return bookCollection.Select(book => new BookDto(book.Id, book.Title)
+            var bookCollection = _bookRepository.GetQuery();
+            if (!string.IsNullOrWhiteSpace(request.TitleSearchWord))
+            {
+                request.TitleSearchWord = request.TitleSearchWord.Trim();
+                bookCollection = bookCollection.Where(c => c.Title.ToLower().Contains(request.TitleSearchWord.ToLower()));
+            }
+            return await bookCollection.Include(book => book.Authors).Select(book => new BookDto(book.Id, book.Title)
             {
                 Description = book.Description,
                 ImageUrl = book.Image,
-                Authors = book.Authors?.Select(author => author.FirstName + " " + author.LastName).ToList()
-            }).ToList();
+                Authors = book.Authors.Select(author => author.FirstName + " " + author.LastName).ToList()
+            }).ToListAsync();
         }
     }
 }

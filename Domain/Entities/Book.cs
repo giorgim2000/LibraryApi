@@ -16,6 +16,11 @@ namespace Domain.Entities
         public DateTime? Year { get; set; }
         public bool Taken { get; set; }
         public virtual ICollection<Author>? Authors { get; set; }
+        public ICollection<BookRentalHistory>? Rentals { get; set; }
+        public Book()
+        {
+            
+        }
         public Book(string title, string? description, double? rating, DateTime? year, bool taken = false)
         {
             Title = title;
