@@ -48,6 +48,7 @@ builder.Services.AddTransient(typeof(IRepository<>),typeof(Repository<>));
 builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
 builder.Services.AddScoped<IBookRepository, BookRepository>();
 builder.Services.AddScoped<IImageService,ImageService>();
+builder.Services.AddScoped<IBookRentalHistoryRepository, BookRentalHistoryRepository>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

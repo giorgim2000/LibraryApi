@@ -44,9 +44,9 @@ namespace Infrastructure.Data
                                                             .HasPrincipalKey(nameof(Book.Id)),
                                             j => j.HasData(new[]
                                                             {
-                                                                new {AuthorsId = 1, BooksId= 3},
-                                                                new {AuthorsId = 2, BooksId= 2},
-                                                                new {AuthorsId = 3, BooksId= 4},
+                                                                new {  AuthorsId = 1, BooksId= 3},
+                                                                new {  AuthorsId = 2, BooksId= 2},
+                                                                new {  AuthorsId = 3, BooksId= 4},
                                                                 new {  AuthorsId = 3, BooksId= 5},
                                                                 new {  AuthorsId = 4, BooksId= 1}
                                                             })
@@ -76,8 +76,8 @@ namespace Infrastructure.Data
                 brh.Property(x => x.UserId).IsRequired();
                 brh.HasOne(x => x.Book).WithMany(x => x.Rentals);
                 brh.Property(x => x.BookId).IsRequired();
-                brh.Property(x => x.RentStart).IsRequired().HasColumnType("date");
-                brh.Property(x => x.RentEnd).IsRequired().HasColumnType("date");
+                brh.Property(x => x.CreationDate).IsRequired().HasColumnType("date");
+                brh.Property(x => x.Status).IsRequired();
             });
 
 
@@ -143,33 +143,6 @@ namespace Infrastructure.Data
                 new Author("J.D.", "Salinger", new DateTime(1957,5,9)){ Id = 4}
             });
             
-            //modelBuilder.Entity<AuthorBook>(x =>
-            //{
-            //    x.ToTable("AuthorBook");
-            //    x.HasKey(new[] { "AuthorId", "BookId" });
-            //});
-
-            //modelBuilder.Entity<AuthorBook>().ToTable("AuthorBook").HasKey(new[] { "AuthorId", "BookId" });
-
-            //modelBuilder.Entity<AuthorBook>().HasData(new[]
-            //{
-            //    new AuthorBook{AuthorId = 1, BookId = 3},
-            //    new AuthorBook{ AuthorId=2, BookId= 2 },
-            //    new AuthorBook{AuthorId = 3, BookId = 4},
-            //    new AuthorBook{AuthorId = 3, BookId = 5},
-            //    new AuthorBook{AuthorId = 4, BookId = 1}
-            //});
-
-
-            //modelBuilder.Entity<AuthorBook>().HasData(new[]
-            //{
-            //    new AuthorBook{ Id=1, AuthorsId = 1, BooksId= 3},
-            //    new AuthorBook{ Id=2, AuthorsId = 2, BooksId= 2},
-            //    new AuthorBook{ Id=3, AuthorsId = 3, BooksId= 4},
-            //    new AuthorBook{Id = 4,  AuthorsId = 3, BooksId= 5},
-            //    new AuthorBook{Id = 5,  AuthorsId = 4, BooksId= 1}
-            //});
-
             modelBuilder.Entity<AppRole>().HasData(new[] 
             { 
                 new AppRole { Id = 1, Name = "User", NormalizedName = "USER", ConcurrencyStamp=Guid.NewGuid().ToString() }, 
@@ -202,7 +175,7 @@ namespace Infrastructure.Data
     {
         public DataContext CreateDbContext(string[] args)
         {
-            var options = new DbContextOptionsBuilder<DataContext>().UseSqlServer($"Server=DESKTOP-B2DMPTU\\SQLEXPRESS; Database=LibraryDB;Encrypt=false;Trusted_Connection=True;");
+            var options = new DbContextOptionsBuilder<DataContext>().UseSqlServer($"Server=.; Database=LibraryDB;Encrypt=false;Trusted_Connection=True;");
             return new DataContext(options.Options);
         }
     }

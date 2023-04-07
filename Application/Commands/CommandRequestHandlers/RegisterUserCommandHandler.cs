@@ -37,9 +37,11 @@ namespace Application.Commands.CommandRequestHandlers
 
             if(registrationResult.Succeeded)
             {
-                var userClaims = new List<Claim>();
-                userClaims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-                userClaims.Add(new Claim(ClaimTypes.Email, user.Email));
+                var userClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Email, user.Email)
+                };
 
                 await _userManager.AddClaimsAsync(user, userClaims);
 

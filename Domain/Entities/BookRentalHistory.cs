@@ -1,4 +1,5 @@
-﻿using Domain.Entities.UserAggregate;
+﻿using Domain.DataTransferObjects.RentalHistoryDtos;
+using Domain.Entities.UserAggregate;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,11 +13,11 @@ namespace Domain.Entities
     public class BookRentalHistory
     {
         public int Id { get; set; }
-        public AppUser User { get; set; }
+        public AppUser? User { get; set; }
         public int UserId { get; set; }
-        public Book Book { get; set; }
+        public Book? Book { get; set; }
         public int BookId { get; set; }
-        public DateTime RentStart { get; set; } = DateTime.Now;
-        public DateTime RentEnd { get; set; } = DateTime.Now.AddDays(7);
+        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public BookRentStatus Status { get; set; }
     }
 }
