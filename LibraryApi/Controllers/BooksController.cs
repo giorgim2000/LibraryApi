@@ -19,11 +19,11 @@ namespace LibraryApi.Controllers
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
         }
-        
+        //C:\Users\user\Desktop\LibraryApi\LibraryApi\bin\Debug\net6.0\BookImages\
         [HttpGet]
         public async Task<IActionResult> GetBookList(string? titleSearch)
         {
-            var bookCollection = await _mediator.Send(new GetBooksQuery() { TitleSearchWord=titleSearch});
+            var bookCollection = await _mediator.Send(new GetBooksQuery() { TitleSearchWord = titleSearch });
             if(bookCollection.Count() == 0)
                 return NotFound();
 
@@ -39,7 +39,6 @@ namespace LibraryApi.Controllers
             return NotFound();
         }
         [HttpPost]
-        [Authorize(Roles = UserType.Admin)]
         public async Task<IActionResult> CreateBook([FromForm]CreateBookCommand input)
         {
             var rootPath = _hostingEnvironment.WebRootPath;
@@ -52,9 +51,10 @@ namespace LibraryApi.Controllers
         }
 
         [HttpPut]
-        [Authorize(Roles = UserType.Admin)]
         public async Task<IActionResult> UpdateBook([FromForm]UpdateBookCommand input)
         {
+            var rootPath = _hostingEnvironment.WebRootPath;
+            input.WebRootPath = rootPath;
             var result = await _mediator.Send(input);
             if (result)
                 return Accepted();
@@ -62,7 +62,6 @@ namespace LibraryApi.Controllers
                 return BadRequest();
         }
         [HttpDelete("{id}")]
-        [Authorize(Roles = UserType.Admin)]
         public async Task<IActionResult> DeleteBook(int id)
         {
             var result = await _mediator.Send(new DeleteBookCommand { Id = id });

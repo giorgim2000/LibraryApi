@@ -20,6 +20,7 @@ namespace Infrastructure.Data
         }
         public DbSet<Book> Books { get; set; } = null!;
         public DbSet<Author> Authors { get; set; } = null!;
+        public DbSet<BookRentalHistory> RentalHistory { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Book>(book =>
@@ -33,34 +34,27 @@ namespace Infrastructure.Data
                 book.Property(x => x.Rating).IsRequired(false);
                 book.Property(x => x.Year).IsRequired(false).HasColumnType("date");
                 book.Property(x => x.Taken).IsRequired();
-                book.HasMany(x => x.Authors).WithMany(x => x.Books);
+                book.HasMany(x => x.Authors).WithMany(x => x.Books)
+                                            .UsingEntity("AuthorBook",
+                                            l => l.HasOne(typeof(Author)).WithMany()
+                                                            .HasForeignKey("AuthorsId")
+                                                            .HasPrincipalKey(nameof(Author.Id)),
+                                            r => r.HasOne(typeof(Book)).WithMany()
+                                                            .HasForeignKey("BooksId")
+                                                            .HasPrincipalKey(nameof(Book.Id)),
+                                            j => j.HasData(new[]
+                                                            {
+                                                                new {AuthorsId = 1, BooksId= 3},
+                                                                new {AuthorsId = 2, BooksId= 2},
+                                                                new {AuthorsId = 3, BooksId= 4},
+                                                                new {  AuthorsId = 3, BooksId= 5},
+                                                                new {  AuthorsId = 4, BooksId= 1}
+                                                            })
+                                            );
+
+
                 book.HasMany(x => x.Rentals).WithOne(x => x.Book);
             });
-
-            modelBuilder.Entity<Book>().HasData(new[]
-            {
-                new Book("The Catcher in the Rye", "J.D. Salinger", 9.99, new DateTime(1951, 7, 16))
-                {
-                    Id = 1
-                },
-                new Book("To Kill a Mockingbird", "Harper Lee", 12.99, new DateTime(1960, 7, 11))
-                {
-                    Id = 2
-                },
-                new Book("1984", "George Orwell", 8.99, new DateTime(1949, 6, 8))
-                {
-                    Id = 3
-                },
-                new Book("The Hobbit", "J.R.R. Tolkien", 14.99, new DateTime(1937, 9, 21))
-                {
-                    Id = 4
-                },
-                new Book("The Lord of the Rings", "J.R.R. Tolkien", 29.99, new DateTime(1954, 7, 29))
-                {
-                    Id = 5
-                }
-            });
-
 
             modelBuilder.Entity<Author>(author =>
             {
@@ -73,6 +67,74 @@ namespace Infrastructure.Data
                 author.HasMany(x => x.Books).WithMany(x => x.Authors);
             });
 
+            modelBuilder.Entity<BookRentalHistory>(brh =>
+            {
+                brh.ToTable("BookRentalHistory");
+                brh.HasKey("Id");
+                brh.HasIndex(x => x.Id).IsUnique();
+                brh.HasOne(x => x.User).WithMany(x => x.Rentals);
+                brh.Property(x => x.UserId).IsRequired();
+                brh.HasOne(x => x.Book).WithMany(x => x.Rentals);
+                brh.Property(x => x.BookId).IsRequired();
+                brh.Property(x => x.RentStart).IsRequired().HasColumnType("date");
+                brh.Property(x => x.RentEnd).IsRequired().HasColumnType("date");
+            });
+
+
+            modelBuilder.Entity<Book>().HasData(new[]
+            {
+                new Book()
+                {
+                    Id = 1,
+                    Title = "The Catcher in the Rye",
+                    Description = "J.D. Salinger",
+                    Rating = 9.99,
+                    Year = new DateTime(1951, 7, 16),
+                    Taken = false,
+                    Image = null
+                },
+                new Book()
+                {
+                    Id = 2,
+                    Title = "To Kill a Mockingbird",
+                    Description = "Harper Lee",
+                    Rating = 12.99,
+                    Year = new DateTime(1960, 7, 11),
+                    Taken = false,
+                    Image = null
+                },
+                new Book()
+                {
+                    Id = 3,
+                    Title = "1984",
+                    Description = "George Orwell",
+                    Rating = 8.99,
+                    Year =  new DateTime(1949, 6, 8),
+                    Taken = false,
+                    Image = null
+                },
+                new Book()
+                {
+                    Id = 4,
+                    Title = "The Hobbit",
+                    Description = "J.R.R. Tolkien",
+                    Rating = 14.99,
+                    Year = new DateTime(1937, 9, 21),
+                    Taken = false,
+                    Image = null
+                },
+                new Book()
+                {
+                    Id = 5,
+                    Title = "The Lord of the Rings",
+                    Description = "J.R.R. Tolkien",
+                    Rating = 29.99,
+                    Year = new DateTime(1954, 7, 29),
+                    Taken = false,
+                    Image = null
+                }
+            });
+
             modelBuilder.Entity<Author>().HasData(new[]
             {
                 new Author("George", "Orwell", new DateTime(1933,12,25)){ Id = 1},
@@ -80,26 +142,23 @@ namespace Infrastructure.Data
                 new Author("J.R.R.", "Tolkien", new DateTime(1961,8,19)){ Id = 3},
                 new Author("J.D.", "Salinger", new DateTime(1957,5,9)){ Id = 4}
             });
-
+            
             //modelBuilder.Entity<AuthorBook>(x =>
             //{
             //    x.ToTable("AuthorBook");
-            //    x.HasKey("Id");
-            //    x.HasIndex("Id").IsUnique();
-            //    x.Property(i => i.AuthorsId).IsRequired();
-            //    x.Property(i => i.BooksId).IsRequired();
+            //    x.HasKey(new[] { "AuthorId", "BookId" });
             //});
 
-            modelBuilder.Entity<AuthorBook>().HasNoKey();
+            //modelBuilder.Entity<AuthorBook>().ToTable("AuthorBook").HasKey(new[] { "AuthorId", "BookId" });
 
-            modelBuilder.Entity<AuthorBook>().HasData(new[]
-            {
-                new AuthorBook{ AuthorsId = 1, BooksId= 3},
-                new AuthorBook{ AuthorsId = 2, BooksId= 2},
-                new AuthorBook{ AuthorsId = 3, BooksId= 4},
-                new AuthorBook{AuthorsId = 3, BooksId= 5},
-                new AuthorBook{AuthorsId = 4, BooksId= 1}
-            });
+            //modelBuilder.Entity<AuthorBook>().HasData(new[]
+            //{
+            //    new AuthorBook{AuthorId = 1, BookId = 3},
+            //    new AuthorBook{ AuthorId=2, BookId= 2 },
+            //    new AuthorBook{AuthorId = 3, BookId = 4},
+            //    new AuthorBook{AuthorId = 3, BookId = 5},
+            //    new AuthorBook{AuthorId = 4, BookId = 1}
+            //});
 
 
             //modelBuilder.Entity<AuthorBook>().HasData(new[]
@@ -129,21 +188,11 @@ namespace Infrastructure.Data
             var hashedPassword = hasher.HashPassword(adminUser, "admin");
             adminUser.PasswordHash = hashedPassword;
             modelBuilder.Entity<AppUser>().HasData(adminUser);
+
             var adminAccRole = new IdentityUserRole<int> { UserId = 1, RoleId = 2 };
             modelBuilder.Entity<IdentityUserRole<int>>().HasData(adminAccRole);
 
-            modelBuilder.Entity<BookRentalHistory>(brh =>
-            {
-                brh.ToTable("BookRentalHistory");
-                brh.HasKey("Id");
-                brh.HasIndex(x => x.Id).IsUnique();
-                brh.HasOne(x => x.User).WithMany(x => x.Rentals);
-                brh.Property(x => x.UserId).IsRequired();
-                brh.HasOne(x => x.Book).WithMany(x => x.Rentals);
-                brh.Property(x => x.BookId).IsRequired();
-                brh.Property(x => x.RentStart).IsRequired().HasColumnType("date");
-                brh.Property(x => x.RentEnd).IsRequired().HasColumnType("date");
-            });
+           
 
             base.OnModelCreating(modelBuilder);
         }
@@ -153,7 +202,7 @@ namespace Infrastructure.Data
     {
         public DataContext CreateDbContext(string[] args)
         {
-            var options = new DbContextOptionsBuilder<DataContext>().UseSqlServer($"Server=.; Database=LibraryDB;Encrypt=false;Trusted_Connection=True;");
+            var options = new DbContextOptionsBuilder<DataContext>().UseSqlServer($"Server=DESKTOP-B2DMPTU\\SQLEXPRESS; Database=LibraryDB;Encrypt=false;Trusted_Connection=True;");
             return new DataContext(options.Options);
         }
     }

@@ -46,21 +46,9 @@ namespace LibraryApi.Controllers
                 return NotFound(result.Errors.FirstOrDefault()?.Description);
 
             return BadRequest(result.Errors.FirstOrDefault()?.Description);
-
-            //var user = await _userManager.FindByNameAsync(input.Username);
-            //if (user == null)
-            //    return NotFound();
-
-            //var roles = await _userManager.GetRolesAsync(user);
-            //var signInResult = await _signInManager.PasswordSignInAsync(user, input.Password, false, true);
-            //if (signInResult.Succeeded)
-            //{
-            //    return NoContent();
-            //}
-
-            //return BadRequest("Something went wront!" );
         }
         [HttpPost(nameof(Logout))]
+        [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

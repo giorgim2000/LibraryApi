@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230406122839_AddingAdminAccount")]
-    partial class AddingAdminAccount
+    [Migration("20230407001604_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,6 +37,33 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BooksId");
 
                     b.ToTable("AuthorBook");
+
+                    b.HasData(
+                        new
+                        {
+                            AuthorsId = 1,
+                            BooksId = 3
+                        },
+                        new
+                        {
+                            AuthorsId = 2,
+                            BooksId = 2
+                        },
+                        new
+                        {
+                            AuthorsId = 3,
+                            BooksId = 4
+                        },
+                        new
+                        {
+                            AuthorsId = 3,
+                            BooksId = 5
+                        },
+                        new
+                        {
+                            AuthorsId = 4,
+                            BooksId = 1
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Author", b =>
@@ -66,6 +93,36 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Authors", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BirthDate = new DateTime(1933, 12, 25, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FirstName = "George",
+                            LastName = "Orwell"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BirthDate = new DateTime(1953, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FirstName = "Harper",
+                            LastName = "Lee"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BirthDate = new DateTime(1961, 8, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FirstName = "J.R.R.",
+                            LastName = "Tolkien"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BirthDate = new DateTime(1957, 5, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FirstName = "J.D.",
+                            LastName = "Salinger"
+                        });
                 });
 
             modelBuilder.Entity("Domain.Entities.Book", b =>
@@ -103,6 +160,85 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Books", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "J.D. Salinger",
+                            Rating = 9.9900000000000002,
+                            Taken = false,
+                            Title = "The Catcher in the Rye",
+                            Year = new DateTime(1951, 7, 16, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Harper Lee",
+                            Rating = 12.99,
+                            Taken = false,
+                            Title = "To Kill a Mockingbird",
+                            Year = new DateTime(1960, 7, 11, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "George Orwell",
+                            Rating = 8.9900000000000002,
+                            Taken = false,
+                            Title = "1984",
+                            Year = new DateTime(1949, 6, 8, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "J.R.R. Tolkien",
+                            Rating = 14.99,
+                            Taken = false,
+                            Title = "The Hobbit",
+                            Year = new DateTime(1937, 9, 21, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "J.R.R. Tolkien",
+                            Rating = 29.989999999999998,
+                            Taken = false,
+                            Title = "The Lord of the Rings",
+                            Year = new DateTime(1954, 7, 29, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
+                });
+
+            modelBuilder.Entity("Domain.Entities.BookRentalHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("RentEnd")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("RentStart")
+                        .HasColumnType("date");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookId");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BookRentalHistory", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.UserAggregate.AppRole", b =>
@@ -138,14 +274,14 @@ namespace Infrastructure.Migrations
                         new
                         {
                             Id = 1,
-                            ConcurrencyStamp = "b494aedc-c49b-4ad7-8112-bcd807fa768d",
+                            ConcurrencyStamp = "94a5af6a-18b9-4f47-ad48-346f28b6887e",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
                             Id = 2,
-                            ConcurrencyStamp = "e7d5cfa7-e4ec-48bb-a159-0d3f8da963b3",
+                            ConcurrencyStamp = "684075db-d8ed-402c-b601-69744f06c73e",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -223,14 +359,14 @@ namespace Infrastructure.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fb375fe1-5dac-4d99-8cee-6d1d2419c9fe",
+                            ConcurrencyStamp = "3017842f-f614-41b7-a4db-696dfb5e4930",
                             Email = "admin@admin.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAEAACcQAAAAEF9nc6df9P2EGsohdWW/4+6nhSCwF5Gruo760pd0oiwjnf8//0FdEl0CBw8RLTdlhg==",
+                            PasswordHash = "AQAAAAEAACcQAAAAECnusn1j4y8BlUs10xC/w6A3IsAwl0ZWhFOFORjl+K1mVFBRL0HFbUPiM65cfTiyDg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ce7ed8da-e03a-4456-8840-944330df710d",
+                            SecurityStamp = "14b4abab-8562-4548-86d7-3a47da82a405",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -361,6 +497,25 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Entities.BookRentalHistory", b =>
+                {
+                    b.HasOne("Domain.Entities.Book", "Book")
+                        .WithMany("Rentals")
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.UserAggregate.AppUser", "User")
+                        .WithMany("Rentals")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Book");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Domain.Entities.UserAggregate.AppRole", null)
@@ -410,6 +565,16 @@ namespace Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.Book", b =>
+                {
+                    b.Navigation("Rentals");
+                });
+
+            modelBuilder.Entity("Domain.Entities.UserAggregate.AppUser", b =>
+                {
+                    b.Navigation("Rentals");
                 });
 #pragma warning restore 612, 618
         }
