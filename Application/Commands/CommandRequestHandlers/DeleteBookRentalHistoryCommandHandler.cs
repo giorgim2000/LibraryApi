@@ -24,13 +24,13 @@ namespace Application.Commands.CommandRequestHandlers
 
         public async Task<bool> Handle(DeleteBookRentalHistoryCommand request, CancellationToken cancellationToken)
         {
-            
             var record = await _rentalRepository.GetById(request.Id);
 
             if (record == null)
                 return false;
 
-            var bookLastHistoryRecord = await _rentalRepository.GetQuery(i => i.BookId == record.BookId).MaxAsync(i => i.CreationDate);
+            var bookLastHistoryRecord = await _rentalRepository.GetQuery(i => i.BookId == record.BookId)
+                                                               .MaxAsync(i => i.CreationDate);
             var isLastRecord = record.CreationDate == bookLastHistoryRecord;
 
             _rentalRepository.Delete(record);

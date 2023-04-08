@@ -13,16 +13,7 @@ namespace Application.Commands.CommandRequests
 {
     public class CreateBookCommand : IRequest<bool>
     {
-        [Required, MaxLength(100)]
-        public string Title { get; set; } = string.Empty;
-        [MaxLength(300)]
-        public string? Description { get; set; }
-        public IFormFile? Image { get; set; }
-        public double? Rating { get; set; }
-        public DateTime? Year { get; set; }
-        [Required]
-        public bool Taken { get; set; } = false;
-        public List<int>? AuthorIds { get; set; }
+        public CreateBookDto Input { get; set; } = new();
         public string WebRootPath { get; set; } = string.Empty;
     }
 }

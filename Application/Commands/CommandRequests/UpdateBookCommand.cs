@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Domain.DataTransferObjects.BookDtos;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -11,19 +12,7 @@ namespace Application.Commands.CommandRequests
 {
     public class UpdateBookCommand : IRequest<bool>
     {
-        [Required]
-        public int Id { get; set; }
-        [Required, MaxLength(100)]
-        public string Title { get; set; } = string.Empty;
-        [MaxLength(300)]
-        public string? Description { get; set; }
-        public IFormFile? Image { get; set; }
-        public double? Rating { get; set; }
-        public DateTime? Year { get; set; }
-        [Required]
-        public bool Taken { get; set; } = false;
-        public List<int> AuthorIds { get; set; } = new List<int>();
+        public UpdateBookDto Input { get; set; } = new();
         public string WebRootPath { get; set; } = string.Empty;
-
     }
 }

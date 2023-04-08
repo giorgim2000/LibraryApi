@@ -12,7 +12,7 @@ namespace LibraryApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = UserType.AdminUser)]
+    [Authorize]
     public class RentalsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -24,9 +24,10 @@ namespace LibraryApi.Controllers
         [HttpGet(nameof(GetUserRentalHistory))]
         public async Task<IActionResult> GetUserRentalHistory(BookRentStatus? status)
         {
+            var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var result = await _mediator.Send(new GetUserRentalHistoryQuery
             {
-                UserId = Convert.ToInt32(User.Claims.FirstOrDefault(i => i.ValueType == ClaimTypes.NameIdentifier)?.Value),
+                UserId = userId,
                 Status = status
             });
             if (result == null || !result.Any())
@@ -37,20 +38,30 @@ namespace LibraryApi.Controllers
 
         [HttpGet(nameof(GetRentalHistory))]
         [Authorize(Roles = UserType.Admin)]
-        public async Task<IActionResult> GetRentalHistory(GetRentalHistoryQuery input)
+        public async Task<IActionResult> GetRentalHistory(int? byUserId, int? byBookId,
+                                                        BookRentStatus? status, DateTime? creationDateStart,
+                                                        DateTime? creationDateEnd)
         {
-            var result = await _mediator.Send(input);
+            var result = await _mediator.Send(new GetRentalHistoryQuery
+            {
+                ByUserId = byUserId,
+                ByBookId = byBookId,
+                Status = status,
+                CreationDateStart = creationDateStart,
+                CreationDateEnd = creationDateEnd
+            });
             if (!result.Any())
                 return NotFound();
 
-            return Ok();
+            return Ok(result);
         }
         [HttpPost(nameof(RentBook))]
         public async Task<IActionResult> RentBook(int bookId)
         {
+            var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var result = await _mediator.Send(new RentBookCommand
             {
-                UserId = Convert.ToInt32(User.Claims.FirstOrDefault(i => i.ValueType == ClaimTypes.NameIdentifier)?.Value),
+                UserId = userId,
                 BookId = bookId
             });
 
@@ -59,12 +70,13 @@ namespace LibraryApi.Controllers
 
             return Ok();
         }
-        [HttpPost]
+        [HttpPost(nameof(ReturnBook))]
         public async Task<IActionResult> ReturnBook(int bookId)
         {
+            var userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
             var result = await _mediator.Send(new ReturnBookCommand
             {
-                UserId = Convert.ToInt32(User.Claims.FirstOrDefault(i => i.ValueType == ClaimTypes.NameIdentifier)?.Value),
+                UserId = userId,
                 BookId = bookId
             });
             if (!result)

@@ -21,8 +21,19 @@ namespace Application.Queries.QueryHandlers
 
         public async Task<IEnumerable<AuthorDto>> Handle(GetAuthorsQuery request, CancellationToken cancellationToken)
         {
-            var authorCollection = await _authorRepository.GetQuery().Include(a => a.Books).ToListAsync();
-            return authorCollection.Select(author => new AuthorDto(author.Id, author.FirstName, author.LastName)).ToList();
+            var authorCollection = _authorRepository.GetQuery();
+            if(request.NameSearch != null)
+            {
+                authorCollection = authorCollection.Where(i => i.FirstName.ToLower().Contains(request.NameSearch.ToLower())
+                                                            || i.LastName.ToLower().Contains(request.NameSearch.ToLower()));
+            }
+                
+            return await authorCollection.Select(author => new AuthorDto
+            {
+                Id = author.Id,
+                FirstName = author.FirstName,
+                LastName = author.LastName
+            }).ToListAsync();
         }
     }
 }

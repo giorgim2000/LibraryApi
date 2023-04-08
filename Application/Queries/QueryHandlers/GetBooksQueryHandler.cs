@@ -32,7 +32,7 @@ namespace Application.Queries.QueryHandlers
             {
                 Description = book.Description,
                 ImageUrl = book.Image,
-                Authors = book.Authors.Select(author => author.FirstName + " " + author.LastName).ToList()
+                Authors = book.Authors != null ? book.Authors.Select(author => author.FirstName + " " + author.LastName).ToList() : null
             }).ToListAsync();
         }
     }

@@ -13,6 +13,7 @@ namespace Domain.DataTransferObjects.RentalHistoryDtos
         public int Id { get; set; }
         public string Username { get; set; } = string.Empty;
         public string BookTitle { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
         public DateTime CreationDate { get; set; }
     }
 }

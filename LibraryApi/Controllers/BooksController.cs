@@ -1,5 +1,6 @@
 ﻿using Application.Commands.CommandRequests;
 using Application.Queries.QueryRequests;
+using Domain.DataTransferObjects.BookDtos;
 using Domain.DataTransferObjects.UserDtos;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -19,7 +20,7 @@ namespace LibraryApi.Controllers
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             _hostingEnvironment = hostingEnvironment ?? throw new ArgumentNullException(nameof(hostingEnvironment));
         }
-        //C:\Users\user\Desktop\LibraryApi\LibraryApi\bin\Debug\net6.0\BookImages\
+
         [HttpGet]
         public async Task<IActionResult> GetBookList(string? titleSearch)
         {
@@ -39,11 +40,11 @@ namespace LibraryApi.Controllers
             return NotFound();
         }
         [HttpPost]
-        public async Task<IActionResult> CreateBook([FromForm]CreateBookCommand input)
+        [Authorize(Roles = UserType.Admin)]
+        public async Task<IActionResult> CreateBook([FromForm]CreateBookDto input)
         {
-            var rootPath = _hostingEnvironment.WebRootPath;
-            input.WebRootPath = rootPath;
-            var result = await _mediator.Send(input);
+            var rootPath = _hostingEnvironment.ContentRootPath;
+            var result = await _mediator.Send(new CreateBookCommand { Input = input, WebRootPath = rootPath });
             if (result)
                 return Created("GetBook", null);
             else
@@ -51,17 +52,18 @@ namespace LibraryApi.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateBook([FromForm]UpdateBookCommand input)
+        [Authorize(Roles = UserType.Admin)]
+        public async Task<IActionResult> UpdateBook([FromForm]UpdateBookDto input)
         {
-            var rootPath = _hostingEnvironment.WebRootPath;
-            input.WebRootPath = rootPath;
-            var result = await _mediator.Send(input);
+            var rootPath = _hostingEnvironment.ContentRootPath;
+            var result = await _mediator.Send(new UpdateBookCommand { Input = input, WebRootPath = rootPath });
             if (result)
                 return Accepted();
             else
                 return BadRequest();
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = UserType.Admin)]
         public async Task<IActionResult> DeleteBook(int id)
         {
             var result = await _mediator.Send(new DeleteBookCommand { Id = id });

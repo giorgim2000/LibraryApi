@@ -10,5 +10,6 @@ namespace Application.Queries.QueryRequests
 {
     public class GetAuthorsQuery : IRequest<IEnumerable<AuthorDto>>
     {
+        public string? NameSearch { get; set; }
     }
 }

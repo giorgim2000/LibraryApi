@@ -2,6 +2,7 @@
 using Domain.DataTransferObjects.RentalHistoryDtos;
 using Infrastructure.Repositories.Abstraction;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,12 @@ namespace Application.Commands.CommandRequestHandlers
             if (book == null || !book.Taken)
                 return false;
 
+            var lastRent = await _rentalRepository.GetQuery(i => i.BookId == request.BookId)
+                                  .OrderByDescending(i => i.CreationDate).FirstOrDefaultAsync();
+
+            if(lastRent == null || lastRent.UserId != request.UserId) 
+                return false;
+
             await _rentalRepository.Create(new Domain.Entities.BookRentalHistory
             {
                 BookId = request.BookId,
@@ -36,7 +43,7 @@ namespace Application.Commands.CommandRequestHandlers
             var rentalResult = await _rentalRepository.SaveChangesAsync();
 
             _bookRepository.Update(book);
-            book.Taken = true;
+            book.Taken = false;
             var bookResult = await _bookRepository.SaveChangesAsync();
 
             if (rentalResult && bookResult)

@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Application.Queries.QueryHandlers
 {
-    public class GetAuthorQueryHandler : IRequestHandler<GetAuthorQuery, AuthorDto?>
+    public class GetAuthorQueryHandler : IRequestHandler<GetAuthorQuery, AuthorDetailsDto?>
     {
         private readonly IRepository<Author> _authorRepository;
         public GetAuthorQueryHandler(IRepository<Author> authorRepository)
@@ -20,13 +20,22 @@ namespace Application.Queries.QueryHandlers
             _authorRepository = authorRepository ?? throw new ArgumentNullException(nameof(authorRepository));
         }
 
-        public async Task<AuthorDto?> Handle(GetAuthorQuery request, CancellationToken cancellationToken)
+        public async Task<AuthorDetailsDto?> Handle(GetAuthorQuery request, CancellationToken cancellationToken)
         {
-            var author = await _authorRepository.GetQuery(author => author.Id == request.Id).Include(a => a.Books).FirstOrDefaultAsync();
+            var author = await _authorRepository.GetQuery(author => author.Id == request.Id)
+                                                .Include(a => a.Books)
+                                                .FirstOrDefaultAsync();
             if (author == null)
                 return null;
 
-            return new AuthorDto(author.Id, author.FirstName, author.LastName);
+            return new AuthorDetailsDto
+            {
+                Id = author.Id,
+                FirstName = author.FirstName,
+                LastName = author.LastName,
+                BirthDate = author.BirthDate,
+                Books = author.Books != null ? author.Books.Select(i => i.Title).ToList() : new List<string>()
+            };
         }
     }
 }

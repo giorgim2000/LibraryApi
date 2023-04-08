@@ -20,7 +20,7 @@ namespace LibraryApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAuthorsList()
+        public async Task<IActionResult> GetAuthorsList(string? nameSearch)
         {
             var authorList = await _mediator.Send(new GetAuthorsQuery());
 

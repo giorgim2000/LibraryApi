@@ -39,9 +39,10 @@ namespace Application.Queries.QueryHandlers
             return await rentalHistory.Include(i => i.User).Include(i => i.Book).Select(i => new BookRentalHistoryDto
             {
                 Id = i.Id,
-                Username = i.User.UserName,
-                BookTitle = i.Book.Title,
-                CreationDate = i.CreationDate
+                Username = i.User != null ? i.User.UserName : string.Empty,
+                BookTitle = i.Book != null ? i.Book.Title : string.Empty,
+                CreationDate = i.CreationDate,
+                Status = i.Status.ToString()
             }).ToListAsync();
         }
     }

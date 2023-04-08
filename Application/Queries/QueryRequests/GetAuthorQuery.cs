@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Queries.QueryRequests
 {
-    public class GetAuthorQuery : IRequest<AuthorDto?>
+    public class GetAuthorQuery : IRequest<AuthorDetailsDto?>
     {
         [Required]
         public int Id { get; set; }

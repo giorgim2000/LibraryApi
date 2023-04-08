@@ -24,10 +24,13 @@ namespace Application.Queries.QueryHandlers
             if (request.Status != null)
                 userRentalHistory = userRentalHistory.Where(i => i.Status == request.Status);
 
-            return await userRentalHistory.Include(i => i.Book).Select(i => new BookRentalHistoryDto
+            return await userRentalHistory.Include(i => i.Book).Include(i => i.User).Select(i => new BookRentalHistoryDto
             {
-                BookTitle = i.Book.Title,
-                CreationDate = i.CreationDate
+                Id = i.Id,
+                BookTitle = i.Book != null ? i.Book.Title : string.Empty,
+                Username = i.User != null ? i.User.UserName : string.Empty,
+                CreationDate = i.CreationDate,
+                Status = i.Status.ToString()
             }).ToListAsync();
         }
     }

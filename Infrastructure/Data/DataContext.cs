@@ -53,7 +53,7 @@ namespace Infrastructure.Data
                                             );
 
 
-                book.HasMany(x => x.Rentals).WithOne(x => x.Book);
+                book.HasMany(x => x.Rentals).WithOne(x => x.Book).HasPrincipalKey(i => i.Id);
             });
 
             modelBuilder.Entity<Author>(author =>
@@ -72,9 +72,9 @@ namespace Infrastructure.Data
                 brh.ToTable("BookRentalHistory");
                 brh.HasKey("Id");
                 brh.HasIndex(x => x.Id).IsUnique();
-                brh.HasOne(x => x.User).WithMany(x => x.Rentals);
+                brh.HasOne(x => x.User).WithMany(x => x.Rentals).HasForeignKey(i => i.UserId);
                 brh.Property(x => x.UserId).IsRequired();
-                brh.HasOne(x => x.Book).WithMany(x => x.Rentals);
+                brh.HasOne(x => x.Book).WithMany(x => x.Rentals).HasForeignKey(i => i.BookId);
                 brh.Property(x => x.BookId).IsRequired();
                 brh.Property(x => x.CreationDate).IsRequired().HasColumnType("date");
                 brh.Property(x => x.Status).IsRequired();

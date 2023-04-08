@@ -22,14 +22,14 @@ namespace Application.Commands.CommandRequestHandlers
         public async Task<bool> Handle(RentBookCommand request, CancellationToken cancellationToken)
         {
             var book = await _bookRepository.GetById(request.BookId);
-            if (book == null && book.Taken)
+            if (book == null || book.Taken)
                 return false;
 
             await _rentalRepository.Create(new Domain.Entities.BookRentalHistory
             {
                 BookId = request.BookId,
                 UserId = request.UserId,
-                CreationDate = DateTime.Now,
+                CreationDate = DateTime.Now.AddDays(1),
                 Status = BookRentStatus.Rent
             });
             var rentalResult = await _rentalRepository.SaveChangesAsync();
